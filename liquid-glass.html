@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Glass - Basketball League Stats</title>
+  <style>
+    /* ===== Design Tokens ===== */
+    :root {
+      /* Spacing */
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+
+      /* Typography */
+      --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      --font-size-xs: 0.75rem;
+      --font-size-sm: 0.875rem;
+      --font-size-md: 1rem;
+      --font-size-lg: 1.25rem;
+      --font-size-xl: 1.5rem;
+      --font-size-2xl: 2rem;
+
+      /* Border Radius */
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --radius-full: 9999px;
+
+      /* Transitions */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Team Colors */
+      --team-a: #3b82f6;
+      --team-b: #22c55e;
+      --team-c: #f59e0b;
+    }
+
+    /* ===== Dark Theme ===== */
+    [data-theme="dark"] {
+      --bg-base: transparent;
+      --bg-gradient-start: rgba(0, 0, 0, 0.6);
+      --bg-gradient-end: rgba(0, 0, 0, 0.75);
+      --bg-mesh-1: rgba(80, 80, 120, 0.1);
+      --bg-mesh-2: rgba(100, 60, 140, 0.08);
+      --bg-mesh-3: rgba(60, 100, 140, 0.06);
+
+      --glass-bg: rgba(20, 20, 25, 0.6);
+      --glass-bg-hover: rgba(30, 30, 35, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --glass-border-hover: rgba(255, 255, 255, 0.25);
+      --glass-shadow: rgba(0, 0, 0, 0.5);
+      --glass-highlight: rgba(255, 255, 255, 0.08);
+      --glass-shine: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%);
+
+      /* Button/Filter glass - more transparent */
+      --btn-glass-bg: rgba(255, 255, 255, 0.03);
+      --btn-glass-border: rgba(255, 255, 255, 0.1);
+
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-muted: rgba(255, 255, 255, 0.45);
+
+      --accent-primary: #ff6b35;
+      --accent-secondary: #4a9eff;
+      --accent-glow: rgba(255, 107, 53, 0.5);
+
+      --medal-gold: #ffd700;
+      --medal-silver: #c0c0c0;
+      --medal-bronze: #cd7f32;
+
+      /* Dark theme team badge colors */
+      --team-a-bg: rgba(255, 255, 255, 0.04);
+      --team-b-bg: rgba(255, 255, 255, 0.04);
+      --team-c-bg: rgba(255, 255, 255, 0.04);
+      --team-a: #60a5fa;
+      --team-b: #4ade80;
+      --team-c: #fbbf24;
+
+      /* Active filter glass */
+      --active-glass-bg: rgba(255, 107, 53, 0.12);
+      --active-glass-border: rgba(255, 107, 53, 0.25);
+    }
+
+    /* ===== Light Theme ===== */
+    [data-theme="light"] {
+      --bg-base: transparent;
+      --bg-gradient-start: rgba(245, 245, 250, 0.7);
+      --bg-gradient-end: rgba(235, 235, 245, 0.8);
+      --bg-mesh-1: rgba(59, 130, 246, 0.1);
+      --bg-mesh-2: rgba(139, 92, 246, 0.08);
+      --bg-mesh-3: rgba(236, 72, 153, 0.05);
+
+      --glass-bg: rgba(255, 255, 255, 0.6);
+      --glass-bg-hover: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.8);
+      --glass-border-hover: rgba(255, 255, 255, 0.95);
+      --glass-shadow: rgba(0, 0, 0, 0.08);
+      --glass-highlight: rgba(255, 255, 255, 0.95);
+      --glass-shine: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, transparent 50%);
+
+      /* Button/Filter glass - more transparent */
+      --btn-glass-bg: rgba(255, 255, 255, 0.5);
+      --btn-glass-border: rgba(255, 255, 255, 0.7);
+
+      --text-primary: rgba(0, 0, 0, 0.88);
+      --text-secondary: rgba(0, 0, 0, 0.55);
+      --text-muted: rgba(0, 0, 0, 0.35);
+
+      --accent-primary: #e55a2b;
+      --accent-secondary: #0066cc;
+      --accent-glow: rgba(229, 90, 43, 0.3);
+
+      --medal-gold: #d4a800;
+      --medal-silver: #8a8a8a;
+      --medal-bronze: #a56324;
+
+      /* Light theme team badge colors */
+      --team-a-bg: rgba(59, 130, 246, 0.15);
+      --team-b-bg: rgba(34, 197, 94, 0.15);
+      --team-c-bg: rgba(245, 158, 11, 0.15);
+      --team-a: #2563eb;
+      --team-b: #16a34a;
+      --team-c: #d97706;
+
+      /* Active filter glass */
+      --active-glass-bg: rgba(229, 90, 43, 0.15);
+      --active-glass-border: rgba(229, 90, 43, 0.4);
+    }
+
+    /* ===== Base Styles ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: transparent;
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: color var(--transition-slow);
+    }
+
+    /* ===== Background Image ===== */
+    .bg-image {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-image: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2090&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    /* ===== Animated Background Overlay ===== */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% 30%, var(--bg-mesh-1), transparent),
+        radial-gradient(ellipse 60% 60% at 80% 20%, var(--bg-mesh-2), transparent),
+        radial-gradient(ellipse 50% 40% at 50% 80%, var(--bg-mesh-3), transparent),
+        linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+      transition: all var(--transition-slow);
+    }
+
+    /* ===== Liquid Glass Classes ===== */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow:
+        0 8px 32px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-normal);
+    }
+
+    .glass::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at 20% 20%, var(--glass-highlight), transparent 60%);
+      pointer-events: none;
+      border-radius: inherit;
+      opacity: 0.8;
+    }
+
+    .glass::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+    }
+
+    .glass:hover:not(header) {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-hover);
+      transform: translateY(-2px);
+      box-shadow:
+        0 12px 40px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight);
+    }
+
+    /* Header - no hover effect */
+    header.glass:hover {
+      background: var(--glass-bg);
+      border-color: var(--glass-border);
+      transform: none;
+      box-shadow:
+        0 8px 32px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight);
+    }
+
+    .glass-light {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      box-shadow:
+        0 4px 16px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-light::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -30%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(ellipse at 30% 30%, var(--glass-highlight), transparent 70%);
+      pointer-events: none;
+      border-radius: inherit;
+      opacity: 0.6;
+    }
+
+    .glass-heavy {
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px) saturate(200%);
+      -webkit-backdrop-filter: blur(30px) saturate(200%);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      box-shadow:
+        0 16px 48px var(--glass-shadow),
+        inset 0 2px 0 var(--glass-highlight);
+    }
+
+    /* ===== Container ===== */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== Header ===== */
+    header {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+      padding: var(--space-2xl) var(--space-lg);
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    header h1 {
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #ffd700 50%, var(--accent-secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% auto;
+      animation: gradient-shift 5s ease infinite;
+    }
+
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+
+    header p {
+      color: var(--text-secondary);
+      font-size: var(--font-size-lg);
+    }
+
+    /* Stats Summary Pills */
+    .stats-summary {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      padding: var(--space-md) var(--space-lg);
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .stat-value {
+      font-size: var(--font-size-xl);
+      font-weight: 700;
+      color: var(--accent-primary);
+      text-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .stat-label {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: var(--space-xs);
+    }
+
+    /* ===== Theme Toggle ===== */
+    .theme-toggle {
+      position: absolute;
+      top: var(--space-2xl);
+      right: var(--space-xl);
+      z-index: 100;
+    }
+
+    .theme-btn {
+      width: 48px;
+      height: 48px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      transition: all var(--transition-normal);
+    }
+
+    .theme-btn:hover {
+      transform: scale(1.1) rotate(15deg);
+    }
+
+    .theme-btn svg {
+      width: 24px;
+      height: 24px;
+      transition: transform var(--transition-normal);
+    }
+
+    .sun-icon { display: none; }
+    .moon-icon { display: block; }
+
+    [data-theme="light"] .sun-icon { display: block; }
+    [data-theme="light"] .moon-icon { display: none; }
+
+    /* ===== Controls ===== */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      align-items: center;
+    }
+
+    /* Season Toggle - Segmented Control */
+    .toggle-group {
+      display: flex;
+      padding: var(--space-xs);
+      gap: var(--space-xs);
+    }
+
+    .toggle-btn {
+      padding: var(--space-sm) var(--space-md);
+      background: var(--btn-glass-bg);
+      backdrop-filter: blur(8px) saturate(130%);
+      -webkit-backdrop-filter: blur(8px) saturate(130%);
+      border: 1px solid var(--btn-glass-border);
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-normal);
+      position: relative;
+      box-shadow:
+        0 1px 4px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight);
+    }
+
+    .toggle-btn.active {
+      background: var(--active-glass-bg);
+      backdrop-filter: blur(10px) saturate(140%);
+      -webkit-backdrop-filter: blur(10px) saturate(140%);
+      border: 1px solid var(--active-glass-border);
+      color: var(--accent-primary);
+      box-shadow:
+        0 2px 12px var(--accent-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .toggle-btn:hover:not(.active) {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-hover);
+      color: var(--text-primary);
+      box-shadow:
+        0 2px 8px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight);
+    }
+
+    /* Search Box */
+    .search-box {
+      position: relative;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: var(--space-md) var(--space-md) var(--space-md) 48px;
+      background: var(--btn-glass-bg);
+      backdrop-filter: blur(10px) saturate(140%);
+      -webkit-backdrop-filter: blur(10px) saturate(140%);
+      border: 1px solid var(--btn-glass-border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: var(--font-size-md);
+      transition: all var(--transition-normal);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+      background: var(--glass-bg-hover);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-box svg {
+      position: absolute;
+      left: var(--space-md);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* ===== Table ===== */
+    .table-wrapper {
+      overflow: hidden;
+      margin-bottom: var(--space-xl);
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      min-width: 900px;
+    }
+
+    th, td {
+      padding: var(--space-md);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    thead tr {
+      background: transparent;
+    }
+
+    th {
+      background: transparent;
+      font-weight: 600;
+      font-size: var(--font-size-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      border-bottom: none;
+      transition: all var(--transition-normal);
+      padding: var(--space-md) var(--space-xs);
+      position: relative;
+    }
+
+    /* Add padding to first and last columns */
+    th:first-child {
+      padding-left: var(--space-lg);
+    }
+
+    th:last-child {
+      padding-right: var(--space-lg);
+    }
+
+    th::before {
+      content: '';
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      left: 4px;
+      right: 4px;
+      background: var(--btn-glass-bg);
+      backdrop-filter: blur(10px) saturate(140%);
+      -webkit-backdrop-filter: blur(10px) saturate(140%);
+      border: 1px solid var(--btn-glass-border);
+      border-radius: var(--radius-sm);
+      z-index: -1;
+      transition: all var(--transition-normal);
+      box-shadow:
+        0 1px 4px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight);
+    }
+
+    th:first-child::before {
+      left: var(--space-md);
+    }
+
+    th:last-child::before {
+      right: var(--space-md);
+    }
+
+    th[data-sort] {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    th[data-sort]:hover::before {
+      background: var(--glass-bg-hover);
+      border-color: var(--glass-border-hover);
+      transform: translateY(-1px);
+      box-shadow:
+        0 3px 10px var(--glass-shadow),
+        inset 0 1px 0 var(--glass-highlight);
+    }
+
+    th[data-sort]:hover {
+      color: var(--text-primary);
+    }
+
+    th.sorted {
+      color: var(--accent-primary);
+    }
+
+    th.sorted::before {
+      background: var(--active-glass-bg);
+      border-color: var(--active-glass-border);
+      box-shadow:
+        0 2px 10px var(--accent-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    th .sort-icon {
+      display: inline-block;
+      margin-left: var(--space-xs);
+      opacity: 0.5;
+      transition: all var(--transition-fast);
+    }
+
+    th.sorted .sort-icon {
+      opacity: 1;
+    }
+
+    th.sorted.desc .sort-icon {
+      transform: rotate(180deg);
+    }
+
+    td {
+      background: transparent;
+      border-bottom: 1px solid var(--glass-border);
+      font-size: var(--font-size-sm);
+      transition: all var(--transition-fast);
+    }
+
+    tbody tr {
+      transition: all var(--transition-fast);
+    }
+
+    tbody tr:hover td {
+      background: var(--glass-bg-hover);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .player-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Team Badge - Glass Pill */
+    .team-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      backdrop-filter: blur(8px) saturate(140%);
+      -webkit-backdrop-filter: blur(8px) saturate(140%);
+      border: 1px solid var(--btn-glass-border);
+    }
+
+    .team-A {
+      background: var(--team-a-bg);
+      color: var(--team-a);
+    }
+    .team-B {
+      background: var(--team-b-bg);
+      color: var(--team-b);
+    }
+    .team-C {
+      background: var(--team-c-bg);
+      color: var(--team-c);
+    }
+
+    .highlight {
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    /* Rank Medals */
+    .rank {
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .rank-1 {
+      color: var(--medal-gold);
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+    .rank-2 {
+      color: var(--medal-silver);
+      text-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+    }
+    .rank-3 {
+      color: var(--medal-bronze);
+      text-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+    }
+
+    /* ===== Chat FAB ===== */
+    .chat-fab {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #ff8555 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow:
+        0 8px 32px var(--accent-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all var(--transition-normal);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 8px 32px var(--accent-glow); }
+      50% { box-shadow: 0 8px 48px var(--accent-glow), 0 0 60px var(--accent-glow); }
+    }
+
+    .chat-fab:hover {
+      transform: scale(1.1);
+      animation: none;
+      box-shadow: 0 12px 48px var(--accent-glow);
+    }
+
+    .chat-fab svg {
+      color: white;
+      width: 28px;
+      height: 28px;
+    }
+
+    /* ===== Chat Modal ===== */
+    .chat-modal {
+      position: fixed;
+      bottom: 100px;
+      right: var(--space-lg);
+      width: 420px;
+      max-width: calc(100vw - 48px);
+      height: 550px;
+      max-height: calc(100vh - 150px);
+      display: none;
+      flex-direction: column;
+      z-index: 1001;
+      overflow: hidden;
+    }
+
+    .chat-modal.open {
+      display: flex;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .chat-header {
+      padding: var(--space-md) var(--space-lg);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .chat-header h3 {
+      font-size: var(--font-size-md);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .chat-header h3 svg {
+      color: var(--accent-primary);
+    }
+
+    .close-btn {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: var(--space-sm);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      background: var(--glass-bg-hover);
+      color: var(--text-primary);
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+    }
+
+    .message {
+      max-width: 90%;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #ff8555 100%);
+      color: white;
+      border-bottom-right-radius: var(--space-xs);
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .message.ai {
+      align-self: flex-start;
+      background: var(--glass-bg-hover);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      color: var(--text-primary);
+      border-bottom-left-radius: var(--space-xs);
+    }
+
+    .message.ai strong {
+      color: var(--accent-primary);
+    }
+
+    .message.ai table {
+      width: 100%;
+      font-size: var(--font-size-xs);
+      margin: var(--space-sm) 0;
+      border-collapse: collapse;
+    }
+
+    .message.ai th, .message.ai td {
+      padding: var(--space-xs) var(--space-sm);
+      border: 1px solid var(--glass-border);
+      text-align: left;
+    }
+
+    .message.ai th {
+      background: var(--glass-bg);
+      color: var(--accent-primary);
+      font-size: var(--font-size-xs);
+    }
+
+    .message.system {
+      align-self: center;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: var(--font-size-xs);
+      text-align: center;
+      padding: var(--space-sm);
+    }
+
+    .chat-input-area {
+      padding: var(--space-md);
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      gap: var(--space-sm);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      padding: var(--space-sm) var(--space-md);
+      background: var(--glass-bg-hover);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: var(--font-size-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .chat-input-area input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .chat-input-area input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .send-btn {
+      padding: var(--space-sm) var(--space-md);
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #ff8555 100%);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex;
+      gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--glass-bg-hover);
+      border-radius: var(--radius-md);
+      width: fit-content;
+      border: 1px solid var(--glass-border);
+    }
+
+    .typing-indicator span {
+      width: 8px;
+      height: 8px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+
+    .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* ===== API Key Modal ===== */
+    .api-key-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: var(--space-lg);
+    }
+
+    .api-key-modal.open {
+      display: flex;
+    }
+
+    .api-key-content {
+      padding: var(--space-xl);
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .api-key-content h3 {
+      margin-bottom: var(--space-sm);
+      font-size: var(--font-size-lg);
+    }
+
+    .api-key-content p {
+      color: var(--text-secondary);
+      margin-bottom: var(--space-lg);
+      font-size: var(--font-size-sm);
+    }
+
+    .api-key-content input {
+      width: 100%;
+      padding: var(--space-md);
+      background: var(--glass-bg-hover);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: var(--font-size-md);
+      margin-bottom: var(--space-md);
+      transition: all var(--transition-fast);
+    }
+
+    .api-key-content input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    .api-key-buttons {
+      display: flex;
+      gap: var(--space-sm);
+      justify-content: flex-end;
+    }
+
+    .btn-secondary {
+      padding: var(--space-sm) var(--space-lg);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .btn-secondary:hover {
+      background: var(--glass-bg-hover);
+    }
+
+    .btn-primary {
+      padding: var(--space-sm) var(--space-lg);
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #ff8555 100%);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: white;
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    /* ===== SVG Export Button ===== */
+    .export-btn {
+      position: fixed;
+      bottom: var(--space-lg);
+      left: var(--space-lg);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      cursor: pointer;
+      z-index: 100;
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .export-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .export-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ===== Export Modal ===== */
+    .export-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: var(--space-lg);
+    }
+
+    .export-modal.open {
+      display: flex;
+    }
+
+    .export-content {
+      padding: var(--space-xl);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .export-content h3 {
+      margin-bottom: var(--space-lg);
+      font-size: var(--font-size-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .export-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .export-option {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm);
+      background: var(--glass-bg);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .export-option:hover {
+      background: var(--glass-bg-hover);
+    }
+
+    .export-option input[type="radio"] {
+      accent-color: var(--accent-primary);
+    }
+
+    .export-option label {
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+    }
+
+    .scale-options {
+      display: flex;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+
+    .scale-btn {
+      padding: var(--space-xs) var(--space-md);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .scale-btn.active {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
+    .scale-btn:hover:not(.active) {
+      background: var(--glass-bg-hover);
+      color: var(--text-primary);
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-2xl) var(--space-lg);
+      color: var(--text-muted);
+    }
+
+    .empty-state svg {
+      margin-bottom: var(--space-md);
+      opacity: 0.5;
+    }
+
+    /* ===== Scrollbar ===== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--glass-bg);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .container {
+        padding: var(--space-md);
+      }
+
+      header {
+        padding: var(--space-lg) var(--space-md);
+      }
+
+      header h1 {
+        font-size: var(--font-size-xl);
+      }
+
+      .stats-summary {
+        gap: var(--space-md);
+      }
+
+      .stat-pill {
+        min-width: 80px;
+        padding: var(--space-sm) var(--space-md);
+      }
+
+      .stat-value {
+        font-size: var(--font-size-lg);
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .search-box {
+        width: 100%;
+        min-width: auto;
+      }
+
+      .toggle-group {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .chat-modal {
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        height: calc(100vh - 80px);
+        max-height: calc(100vh - 80px);
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      }
+
+      .chat-header {
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      }
+
+      .chat-input-area {
+        border-radius: 0;
+      }
+
+      .theme-toggle {
+        top: var(--space-md);
+        right: var(--space-md);
+      }
+
+      .export-btn {
+        bottom: var(--space-md);
+        left: var(--space-md);
+      }
+    }
+
+    /* ===== Reduced Motion ===== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Image -->
+  <div class="bg-image"></div>
+  <!-- Animated Background Overlay -->
+  <div class="bg-mesh"></div>
+
+  <div class="container" id="exportTarget">
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+      <button class="theme-btn glass-light" id="themeToggle" title="Toggle theme">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Header -->
+    <header class="glass">
+      <div class="header-content">
+        <h1>Nineblockers League</h1>
+        <p id="seasonTitle">2025 August Season Stats</p>
+        <div class="stats-summary">
+          <div class="stat-pill glass-light">
+            <div class="stat-value" id="totalRounds">12</div>
+            <div class="stat-label">Rounds</div>
+          </div>
+          <div class="stat-pill glass-light">
+            <div class="stat-value" id="totalPlayers">42</div>
+            <div class="stat-label">Players</div>
+          </div>
+          <div class="stat-pill glass-light">
+            <div class="stat-value" id="totalTeams">3</div>
+            <div class="stat-label">Teams</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="toggle-group glass-light" id="seasonSelector">
+        <button class="toggle-btn" data-season="202402">2024 Feb</button>
+        <button class="toggle-btn" data-season="202409">2024 Sep</button>
+        <button class="toggle-btn active" data-season="202508">2025 Aug</button>
+      </div>
+      <div class="search-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search player...">
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrapper glass">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th data-sort="number">No.<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="team">Team<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="name">Name<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="games">GP<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="totalPts" class="sorted desc">PTS<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="avgPts">PPG<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="totalAst">AST<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="avgAst">APG<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="totalReb">REB<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="avgReb">RPG<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="totalStl">STL<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="avgStl">SPG<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="totalBlk">BLK<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="avgBlk">BPG<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="total3pt">3PT<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+              <th data-sort="avg3pt">3PG<span class="sort-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7-7 7 7"/></svg></span></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Button -->
+  <button class="export-btn glass-light" id="exportBtn" title="Export to SVG">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    Export SVG
+  </button>
+
+  <!-- Chat FAB -->
+  <button class="chat-fab" id="chatFab" title="Ask AI">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
+
+  <!-- Chat Modal -->
+  <div class="chat-modal glass-heavy" id="chatModal">
+    <div class="chat-header">
+      <h3>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        League Stats AI
+      </h3>
+      <button class="close-btn" id="closeChat">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="message system">
+        Ask me anything about Nineblockers League stats!
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Type your question..." autocomplete="off">
+      <button class="send-btn" id="sendBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- API Key Modal -->
+  <div class="api-key-modal" id="apiKeyModal">
+    <div class="api-key-content glass-heavy">
+      <h3>Gemini API Key</h3>
+      <p>Enter your Google Gemini API key to enable AI chat. The key is stored securely in your browser.</p>
+      <input type="password" id="apiKeyInput" placeholder="Enter API key...">
+      <div class="api-key-buttons">
+        <button class="btn-secondary" id="cancelApiKey">Cancel</button>
+        <button class="btn-primary" id="saveApiKey">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Modal -->
+  <div class="export-modal" id="exportModal">
+    <div class="export-content glass-heavy">
+      <h3>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Export to SVG
+      </h3>
+      <div class="export-options">
+        <div class="export-option">
+          <input type="radio" name="exportArea" value="full" id="exportFull" checked>
+          <label for="exportFull">Full Dashboard</label>
+        </div>
+        <div class="export-option">
+          <input type="radio" name="exportArea" value="header" id="exportHeader">
+          <label for="exportHeader">Header Only</label>
+        </div>
+        <div class="export-option">
+          <input type="radio" name="exportArea" value="table" id="exportTable">
+          <label for="exportTable">Table Only</label>
+        </div>
+      </div>
+      <p style="font-size: var(--font-size-sm); color: var(--text-secondary); margin-bottom: var(--space-sm);">Scale:</p>
+      <div class="scale-options">
+        <button class="scale-btn" data-scale="1">1x</button>
+        <button class="scale-btn active" data-scale="2">2x</button>
+        <button class="scale-btn" data-scale="3">3x</button>
+      </div>
+      <div class="api-key-buttons" style="margin-top: var(--space-lg);">
+        <button class="btn-secondary" id="cancelExport">Cancel</button>
+        <button class="btn-primary" id="confirmExport">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- html-to-image library -->
+  <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+
+  <script type="module">
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+    // Season Data (same as original)
+    const seasonsData = {
+      '202402': {"season":"2024 Feb","totalRounds":15,"totalPlayers":39,"players":[{"number":1,"team":"A","name":"Kim Woojin","points":{"total":30,"avg":7.5},"games":4,"stats":{"assists":{"total":27,"avg":6.8},"rebounds":{"total":18,"avg":4.5},"steals":{"total":7,"avg":1.8},"blocks":{"total":1,"avg":0.2},"threePointers":{"total":0,"avg":0.0}}},{"number":4,"team":"A","name":"Kim Dongyu","points":{"total":321,"avg":22.9},"games":14,"stats":{"assists":{"total":48,"avg":3.4},"rebounds":{"total":226,"avg":16.1},"steals":{"total":32,"avg":2.3},"blocks":{"total":25,"avg":1.8},"threePointers":{"total":0,"avg":0.0}}},{"number":7,"team":"A","name":"Kwon Inhoe","points":{"total":106,"avg":8.8},"games":12,"stats":{"assists":{"total":40,"avg":3.3},"rebounds":{"total":113,"avg":9.4},"steals":{"total":8,"avg":0.7},"blocks":{"total":10,"avg":0.8},"threePointers":{"total":0,"avg":0.0}}},{"number":11,"team":"A","name":"Namgung Hyun","points":{"total":263,"avg":21.9},"games":12,"stats":{"assists":{"total":48,"avg":4.0},"rebounds":{"total":146,"avg":12.2},"steals":{"total":43,"avg":3.6},"blocks":{"total":8,"avg":0.7},"threePointers":{"total":0,"avg":0.0}}},{"number":24,"team":"A","name":"Yoo Jihyung","points":{"total":513,"avg":42.8},"games":12,"stats":{"assists":{"total":64,"avg":5.3},"rebounds":{"total":52,"avg":4.3},"steals":{"total":12,"avg":1.0},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":22,"team":"A","name":"Lee Yunsam","points":{"total":197,"avg":13.1},"games":15,"stats":{"assists":{"total":33,"avg":2.2},"rebounds":{"total":41,"avg":2.7},"steals":{"total":13,"avg":0.9},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":0,"avg":0.0}}},{"number":93,"team":"B","name":"Kang Jaehoon","points":{"total":212,"avg":30.3},"games":7,"stats":{"assists":{"total":33,"avg":4.7},"rebounds":{"total":33,"avg":4.7},"steals":{"total":22,"avg":3.1},"blocks":{"total":2,"avg":0.3},"threePointers":{"total":0,"avg":0.0}}},{"number":23,"team":"B","name":"Baek Kyungjun","points":{"total":211,"avg":21.1},"games":10,"stats":{"assists":{"total":22,"avg":2.2},"rebounds":{"total":106,"avg":10.6},"steals":{"total":19,"avg":1.9},"blocks":{"total":5,"avg":0.5},"threePointers":{"total":0,"avg":0.0}}},{"number":46,"team":"B","name":"Shim Changhyun","points":{"total":214,"avg":17.8},"games":12,"stats":{"assists":{"total":36,"avg":3.0},"rebounds":{"total":49,"avg":4.1},"steals":{"total":22,"avg":1.8},"blocks":{"total":5,"avg":0.4},"threePointers":{"total":0,"avg":0.0}}},{"number":78,"team":"B","name":"Song Jinsu","points":{"total":182,"avg":13.0},"games":14,"stats":{"assists":{"total":38,"avg":2.7},"rebounds":{"total":95,"avg":6.8},"steals":{"total":22,"avg":1.6},"blocks":{"total":6,"avg":0.4},"threePointers":{"total":0,"avg":0.0}}},{"number":0,"team":"C","name":"Lee Jangwon","points":{"total":332,"avg":27.7},"games":12,"stats":{"assists":{"total":42,"avg":3.5},"rebounds":{"total":151,"avg":12.6},"steals":{"total":17,"avg":1.4},"blocks":{"total":9,"avg":0.8},"threePointers":{"total":0,"avg":0.0}}},{"number":30,"team":"C","name":"Kim Donggwang","points":{"total":301,"avg":27.4},"games":11,"stats":{"assists":{"total":62,"avg":5.6},"rebounds":{"total":41,"avg":3.7},"steals":{"total":11,"avg":1.0},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":0,"avg":0.0}}},{"number":32,"team":"C","name":"Kim Jungho","points":{"total":244,"avg":16.3},"games":15,"stats":{"assists":{"total":160,"avg":10.7},"rebounds":{"total":88,"avg":5.9},"steals":{"total":39,"avg":2.6},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":0,"avg":0.0}}},{"number":8,"team":"C","name":"Park Junghyun","points":{"total":184,"avg":18.4},"games":10,"stats":{"assists":{"total":45,"avg":4.5},"rebounds":{"total":44,"avg":4.4},"steals":{"total":33,"avg":3.3},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":0,"avg":0.0}}},{"number":34,"team":"C","name":"Lee Seunghyun","points":{"total":178,"avg":29.7},"games":6,"stats":{"assists":{"total":12,"avg":2.0},"rebounds":{"total":108,"avg":18.0},"steals":{"total":6,"avg":1.0},"blocks":{"total":2,"avg":0.3},"threePointers":{"total":0,"avg":0.0}}}]},
+      '202409': {"season":"2024 Sep","totalRounds":13,"totalPlayers":36,"players":[{"number":6,"team":"C","name":"Ahn Byungwoong","points":{"total":465,"avg":46.5},"games":12,"stats":{"assists":{"total":15,"avg":1.5},"rebounds":{"total":127,"avg":12.7},"steals":{"total":11,"avg":1.1},"blocks":{"total":7,"avg":0.7},"threePointers":{"total":0,"avg":0.0}}},{"number":24,"team":"A","name":"Yoo Jihyung","points":{"total":405,"avg":36.8},"games":12,"stats":{"assists":{"total":64,"avg":5.8},"rebounds":{"total":38,"avg":3.5},"steals":{"total":14,"avg":1.3},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":0,"avg":0.0}}},{"number":93,"team":"B","name":"Kang Jaehoon","points":{"total":399,"avg":49.9},"games":10,"stats":{"assists":{"total":36,"avg":4.5},"rebounds":{"total":50,"avg":6.2},"steals":{"total":16,"avg":2.0},"blocks":{"total":4,"avg":0.5},"threePointers":{"total":0,"avg":0.0}}},{"number":39,"team":"C","name":"Lee Minho","points":{"total":301,"avg":43.0},"games":9,"stats":{"assists":{"total":38,"avg":5.4},"rebounds":{"total":191,"avg":27.3},"steals":{"total":9,"avg":1.3},"blocks":{"total":7,"avg":1.0},"threePointers":{"total":0,"avg":0.0}}},{"number":4,"team":"A","name":"Kim Dongyu","points":{"total":254,"avg":28.2},"games":9,"stats":{"assists":{"total":36,"avg":4.0},"rebounds":{"total":134,"avg":14.9},"steals":{"total":11,"avg":1.2},"blocks":{"total":24,"avg":2.7},"threePointers":{"total":0,"avg":0.0}}},{"number":48,"team":"B","name":"Kim Jucheol","points":{"total":202,"avg":33.7},"games":7,"stats":{"assists":{"total":16,"avg":2.7},"rebounds":{"total":68,"avg":11.3},"steals":{"total":11,"avg":1.8},"blocks":{"total":19,"avg":3.2},"threePointers":{"total":0,"avg":0.0}}},{"number":22,"team":"A","name":"Lee Yunsam","points":{"total":194,"avg":21.6},"games":11,"stats":{"assists":{"total":29,"avg":3.2},"rebounds":{"total":25,"avg":2.8},"steals":{"total":5,"avg":0.6},"blocks":{"total":2,"avg":0.2},"threePointers":{"total":0,"avg":0.0}}},{"number":80,"team":"C","name":"Choi Jaemin","points":{"total":194,"avg":27.7},"games":9,"stats":{"assists":{"total":44,"avg":6.3},"rebounds":{"total":54,"avg":7.7},"steals":{"total":9,"avg":1.3},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":0,"avg":0.0}}},{"number":30,"team":"B","name":"Kim Donggwang","points":{"total":180,"avg":22.5},"games":9,"stats":{"assists":{"total":41,"avg":5.1},"rebounds":{"total":28,"avg":3.5},"steals":{"total":8,"avg":1.0},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":0,"avg":0.0}}},{"number":32,"team":"A","name":"Kim Jungho","points":{"total":105,"avg":10.5},"games":12,"stats":{"assists":{"total":102,"avg":10.2},"rebounds":{"total":90,"avg":9.0},"steals":{"total":20,"avg":2.0},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}}]},
+      '202508': {"season":"2025 Aug","totalRounds":12,"totalPlayers":42,"players":[{"number":6,"team":"A","name":"Ahn Byungwoong","points":{"total":349,"avg":38.8},"games":10,"stats":{"assists":{"total":15,"avg":1.7},"rebounds":{"total":85,"avg":9.4},"steals":{"total":23,"avg":2.6},"blocks":{"total":3,"avg":0.3},"threePointers":{"total":33,"avg":3.7}}},{"number":93,"team":"B","name":"Kang Jaehoon","points":{"total":340,"avg":48.6},"games":8,"stats":{"assists":{"total":43,"avg":6.1},"rebounds":{"total":45,"avg":6.4},"steals":{"total":20,"avg":2.9},"blocks":{"total":6,"avg":0.9},"threePointers":{"total":9,"avg":1.3}}},{"number":24,"team":"B","name":"Yoo Jihyung","points":{"total":213,"avg":30.4},"games":8,"stats":{"assists":{"total":38,"avg":5.4},"rebounds":{"total":26,"avg":3.7},"steals":{"total":6,"avg":0.9},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":5,"avg":0.7}}},{"number":39,"team":"C","name":"Lee Minho","points":{"total":209,"avg":29.9},"games":8,"stats":{"assists":{"total":33,"avg":4.7},"rebounds":{"total":145,"avg":20.7},"steals":{"total":13,"avg":1.9},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":1,"avg":0.1}}},{"number":30,"team":"A","name":"Kim Donggwang","points":{"total":202,"avg":25.2},"games":10,"stats":{"assists":{"total":62,"avg":7.8},"rebounds":{"total":33,"avg":4.1},"steals":{"total":10,"avg":1.2},"blocks":{"total":2,"avg":0.2},"threePointers":{"total":4,"avg":0.5}}},{"number":0,"team":"C","name":"Lee Jangwon","points":{"total":168,"avg":24.0},"games":8,"stats":{"assists":{"total":29,"avg":4.1},"rebounds":{"total":95,"avg":13.6},"steals":{"total":10,"avg":1.4},"blocks":{"total":2,"avg":0.3},"threePointers":{"total":0,"avg":0.0}}},{"number":22,"team":"C","name":"Lee Yunsam","points":{"total":165,"avg":18.3},"games":10,"stats":{"assists":{"total":35,"avg":3.9},"rebounds":{"total":43,"avg":4.8},"steals":{"total":5,"avg":0.6},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":4,"avg":0.4}}},{"number":72,"team":"B","name":"Kim Jucheol","points":{"total":161,"avg":26.8},"games":7,"stats":{"assists":{"total":15,"avg":2.5},"rebounds":{"total":64,"avg":10.7},"steals":{"total":8,"avg":1.3},"blocks":{"total":11,"avg":1.8},"threePointers":{"total":6,"avg":1.0}}},{"number":34,"team":"B","name":"Lee Seunghyun","points":{"total":117,"avg":19.5},"games":7,"stats":{"assists":{"total":6,"avg":1.0},"rebounds":{"total":100,"avg":16.7},"steals":{"total":3,"avg":0.5},"blocks":{"total":14,"avg":2.3},"threePointers":{"total":1,"avg":0.2}}},{"number":32,"team":"A","name":"Kim Jungho","points":{"total":114,"avg":11.4},"games":11,"stats":{"assists":{"total":115,"avg":11.5},"rebounds":{"total":85,"avg":8.5},"steals":{"total":26,"avg":2.6},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":22,"avg":2.2}}},{"number":46,"team":"B","name":"Shim Changhyun","points":{"total":113,"avg":12.6},"games":11,"stats":{"assists":{"total":19,"avg":2.1},"rebounds":{"total":27,"avg":3.0},"steals":{"total":8,"avg":0.9},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":4,"team":"A","name":"Kim Dongyu","points":{"total":106,"avg":15.1},"games":9,"stats":{"assists":{"total":29,"avg":4.1},"rebounds":{"total":115,"avg":16.4},"steals":{"total":8,"avg":1.1},"blocks":{"total":15,"avg":2.1},"threePointers":{"total":0,"avg":0.0}}},{"number":16,"team":"A","name":"Kim Hyunjun","points":{"total":96,"avg":12.0},"games":10,"stats":{"assists":{"total":18,"avg":2.2},"rebounds":{"total":27,"avg":3.4},"steals":{"total":6,"avg":0.8},"blocks":{"total":3,"avg":0.4},"threePointers":{"total":2,"avg":0.2}}},{"number":23,"team":"A","name":"Baek Kyungjun","points":{"total":95,"avg":15.8},"games":6,"stats":{"assists":{"total":12,"avg":2.0},"rebounds":{"total":69,"avg":11.5},"steals":{"total":6,"avg":1.0},"blocks":{"total":3,"avg":0.5},"threePointers":{"total":0,"avg":0.0}}},{"number":35,"team":"C","name":"Kang Kwonyeol","points":{"total":92,"avg":10.2},"games":9,"stats":{"assists":{"total":43,"avg":4.8},"rebounds":{"total":96,"avg":10.7},"steals":{"total":14,"avg":1.6},"blocks":{"total":6,"avg":0.7},"threePointers":{"total":4,"avg":0.4}}},{"number":78,"team":"C","name":"Song Jinsu","points":{"total":90,"avg":12.9},"games":8,"stats":{"assists":{"total":21,"avg":3.0},"rebounds":{"total":37,"avg":5.3},"steals":{"total":7,"avg":1.0},"blocks":{"total":2,"avg":0.3},"threePointers":{"total":0,"avg":0.0}}},{"number":7,"team":"B","name":"Kwon Inhoe","points":{"total":77,"avg":11.0},"games":8,"stats":{"assists":{"total":17,"avg":2.4},"rebounds":{"total":84,"avg":12.0},"steals":{"total":3,"avg":0.4},"blocks":{"total":6,"avg":0.9},"threePointers":{"total":8,"avg":1.1}}},{"number":38,"team":"A","name":"Gil Eulseop","points":{"total":70,"avg":8.8},"games":8,"stats":{"assists":{"total":7,"avg":0.9},"rebounds":{"total":52,"avg":6.5},"steals":{"total":5,"avg":0.6},"blocks":{"total":1,"avg":0.1},"threePointers":{"total":0,"avg":0.0}}},{"number":47,"team":"A","name":"Song Sungil","points":{"total":59,"avg":7.4},"games":10,"stats":{"assists":{"total":9,"avg":1.1},"rebounds":{"total":39,"avg":4.9},"steals":{"total":8,"avg":1.0},"blocks":{"total":9,"avg":1.1},"threePointers":{"total":11,"avg":1.4}}},{"number":10,"team":"C","name":"Ahn Byungyoung","points":{"total":56,"avg":11.2},"games":5,"stats":{"assists":{"total":10,"avg":2.0},"rebounds":{"total":64,"avg":12.8},"steals":{"total":4,"avg":0.8},"blocks":{"total":3,"avg":0.6},"threePointers":{"total":2,"avg":0.4}}},{"number":21,"team":"A","name":"Kwon Gihyun","points":{"total":51,"avg":5.7},"games":11,"stats":{"assists":{"total":15,"avg":1.7},"rebounds":{"total":56,"avg":6.2},"steals":{"total":6,"avg":0.7},"blocks":{"total":5,"avg":0.6},"threePointers":{"total":0,"avg":0.0}}},{"number":99,"team":"B","name":"Kim Hyemi","points":{"total":47,"avg":11.8},"games":5,"stats":{"assists":{"total":8,"avg":2.0},"rebounds":{"total":6,"avg":1.5},"steals":{"total":3,"avg":0.8},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":8,"avg":2.0}}},{"number":88,"team":"C","name":"Choi Seunghwan","points":{"total":43,"avg":10.8},"games":5,"stats":{"assists":{"total":8,"avg":2.0},"rebounds":{"total":31,"avg":7.8},"steals":{"total":2,"avg":0.5},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":7,"avg":1.8}}},{"number":79,"team":"C","name":"Min Deuksu","points":{"total":42,"avg":7.0},"games":8,"stats":{"assists":{"total":10,"avg":1.7},"rebounds":{"total":21,"avg":3.5},"steals":{"total":3,"avg":0.5},"blocks":{"total":1,"avg":0.2},"threePointers":{"total":8,"avg":1.3}}},{"number":17,"team":"A","name":"Chae Youngjin","points":{"total":41,"avg":8.2},"games":6,"stats":{"assists":{"total":10,"avg":2.0},"rebounds":{"total":10,"avg":2.0},"steals":{"total":9,"avg":1.8},"blocks":{"total":1,"avg":0.2},"threePointers":{"total":0,"avg":0.0}}},{"number":19,"team":"B","name":"Jung Yongju","points":{"total":35,"avg":8.8},"games":5,"stats":{"assists":{"total":6,"avg":1.5},"rebounds":{"total":11,"avg":2.8},"steals":{"total":8,"avg":2.0},"blocks":{"total":2,"avg":0.5},"threePointers":{"total":2,"avg":0.5}}},{"number":28,"team":"C","name":"Kang Hyojin","points":{"total":34,"avg":11.3},"games":4,"stats":{"assists":{"total":3,"avg":1.0},"rebounds":{"total":19,"avg":6.3},"steals":{"total":6,"avg":2.0},"blocks":{"total":2,"avg":0.7},"threePointers":{"total":0,"avg":0.0}}},{"number":2,"team":"B","name":"Oh Jongpil","points":{"total":32,"avg":8.0},"games":5,"stats":{"assists":{"total":5,"avg":1.2},"rebounds":{"total":48,"avg":12.0},"steals":{"total":1,"avg":0.2},"blocks":{"total":2,"avg":0.5},"threePointers":{"total":0,"avg":0.0}}},{"number":45,"team":"B","name":"Kim Wonbeom","points":{"total":30,"avg":5.0},"games":6,"stats":{"assists":{"total":6,"avg":1.0},"rebounds":{"total":24,"avg":4.0},"steals":{"total":8,"avg":1.3},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":31,"team":"A","name":"Kim Junhwan","points":{"total":29,"avg":4.8},"games":7,"stats":{"assists":{"total":9,"avg":1.5},"rebounds":{"total":59,"avg":9.8},"steals":{"total":8,"avg":1.3},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":41,"team":"B","name":"Lee Dongseok","points":{"total":28,"avg":9.3},"games":3,"stats":{"assists":{"total":6,"avg":2.0},"rebounds":{"total":41,"avg":13.7},"steals":{"total":3,"avg":1.0},"blocks":{"total":10,"avg":3.3},"threePointers":{"total":0,"avg":0.0}}},{"number":20,"team":"C","name":"Jung Heewon","points":{"total":26,"avg":13.0},"games":2,"stats":{"assists":{"total":6,"avg":3.0},"rebounds":{"total":19,"avg":9.5},"steals":{"total":3,"avg":1.5},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":8,"team":"C","name":"Park Junghyun","points":{"total":24,"avg":8.0},"games":4,"stats":{"assists":{"total":11,"avg":3.7},"rebounds":{"total":16,"avg":5.3},"steals":{"total":7,"avg":2.3},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":14,"team":"C","name":"Ko Mingeun","points":{"total":21,"avg":4.2},"games":5,"stats":{"assists":{"total":8,"avg":1.6},"rebounds":{"total":44,"avg":8.8},"steals":{"total":5,"avg":1.0},"blocks":{"total":1,"avg":0.2},"threePointers":{"total":0,"avg":0.0}}},{"number":25,"team":"A","name":"Son Jaemin","points":{"total":20,"avg":20.0},"games":3,"stats":{"assists":{"total":1,"avg":1.0},"rebounds":{"total":2,"avg":2.0},"steals":{"total":0,"avg":0.0},"blocks":{"total":1,"avg":1.0},"threePointers":{"total":0,"avg":0.0}}},{"number":26,"team":"B","name":"Lee Yunsu","points":{"total":20,"avg":20.0},"games":1,"stats":{"assists":{"total":0,"avg":0.0},"rebounds":{"total":7,"avg":7.0},"steals":{"total":0,"avg":0.0},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":92,"team":"B","name":"Park Moonyong","points":{"total":19,"avg":19.0},"games":1,"stats":{"assists":{"total":1,"avg":1.0},"rebounds":{"total":6,"avg":6.0},"steals":{"total":0,"avg":0.0},"blocks":{"total":1,"avg":1.0},"threePointers":{"total":0,"avg":0.0}}},{"number":9,"team":"A","name":"Kim Jinbae","points":{"total":8,"avg":2.0},"games":5,"stats":{"assists":{"total":2,"avg":0.5},"rebounds":{"total":22,"avg":5.5},"steals":{"total":2,"avg":0.5},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":52,"team":"C","name":"Kwak Sungjae","points":{"total":7,"avg":1.0},"games":8,"stats":{"assists":{"total":3,"avg":0.4},"rebounds":{"total":33,"avg":4.7},"steals":{"total":1,"avg":0.1},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}},{"number":40,"team":"B","name":"Jung Moongwan","points":{"total":5,"avg":1.7},"games":5,"stats":{"assists":{"total":3,"avg":1.0},"rebounds":{"total":20,"avg":6.7},"steals":{"total":0,"avg":0.0},"blocks":{"total":0,"avg":0.0},"threePointers":{"total":0,"avg":0.0}}}]}
+    };
+
+    // State
+    let currentSeason = '202508';
+    let leagueData = seasonsData[currentSeason];
+    let currentSort = { field: 'totalPts', order: 'desc' };
+    let searchQuery = '';
+    let apiKey = localStorage.getItem('gemini_api_key') || '';
+    let genAI = null;
+    let chatHistory = [];
+    let exportScale = 2;
+
+    // DOM Elements
+    const tableBody = document.getElementById('tableBody');
+    const searchInput = document.getElementById('searchInput');
+    const chatFab = document.getElementById('chatFab');
+    const chatModal = document.getElementById('chatModal');
+    const closeChat = document.getElementById('closeChat');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const apiKeyModal = document.getElementById('apiKeyModal');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const saveApiKeyBtn = document.getElementById('saveApiKey');
+    const cancelApiKeyBtn = document.getElementById('cancelApiKey');
+    const themeToggle = document.getElementById('themeToggle');
+    const exportBtn = document.getElementById('exportBtn');
+    const exportModal = document.getElementById('exportModal');
+    const cancelExportBtn = document.getElementById('cancelExport');
+    const confirmExportBtn = document.getElementById('confirmExport');
+
+    // Theme Toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    // Initialize theme from localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // Get player value for sorting
+    function getPlayerValue(player, field) {
+      switch (field) {
+        case 'number': return player.number;
+        case 'team': return player.team;
+        case 'name': return player.name;
+        case 'games': return player.games;
+        case 'totalPts': return player.points.total;
+        case 'avgPts': return player.points.avg;
+        case 'totalAst': return player.stats.assists.total;
+        case 'avgAst': return player.stats.assists.avg;
+        case 'totalReb': return player.stats.rebounds.total;
+        case 'avgReb': return player.stats.rebounds.avg;
+        case 'totalStl': return player.stats.steals.total;
+        case 'avgStl': return player.stats.steals.avg;
+        case 'totalBlk': return player.stats.blocks.total;
+        case 'avgBlk': return player.stats.blocks.avg;
+        case 'total3pt': return player.stats.threePointers.total;
+        case 'avg3pt': return player.stats.threePointers.avg;
+        default: return 0;
+      }
+    }
+
+    // Get sorted players
+    function getSortedPlayers() {
+      let players = [...leagueData.players];
+      players.sort((a, b) => {
+        const aVal = getPlayerValue(a, currentSort.field);
+        const bVal = getPlayerValue(b, currentSort.field);
+        if (typeof aVal === 'string') {
+          return currentSort.order === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        }
+        return currentSort.order === 'asc' ? aVal - bVal : bVal - aVal;
+      });
+      return players;
+    }
+
+    // Filter players by search
+    function getFilteredPlayers(sortedPlayers) {
+      if (!searchQuery) return sortedPlayers;
+      return sortedPlayers.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+
+    // Render table
+    function renderTable() {
+      const sortedPlayers = getSortedPlayers();
+      const filteredPlayers = getFilteredPlayers(sortedPlayers);
+
+      const rankMap = new Map();
+      sortedPlayers.forEach((player, index) => {
+        rankMap.set(player.name, index + 1);
+      });
+
+      if (filteredPlayers.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="17">
+              <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <p>No results found</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = filteredPlayers.map(player => {
+        const rank = rankMap.get(player.name);
+        const rankClass = rank <= 3 ? `rank-${rank}` : '';
+        return `
+          <tr>
+            <td class="rank ${rankClass}">${rank}</td>
+            <td>${player.number}</td>
+            <td><span class="team-badge team-${player.team}">${player.team}</span></td>
+            <td class="player-name">${player.name}</td>
+            <td>${player.games}</td>
+            <td class="highlight">${player.points.total}</td>
+            <td>${player.points.avg.toFixed(1)}</td>
+            <td>${player.stats.assists.total}</td>
+            <td>${player.stats.assists.avg.toFixed(1)}</td>
+            <td>${player.stats.rebounds.total}</td>
+            <td>${player.stats.rebounds.avg.toFixed(1)}</td>
+            <td>${player.stats.steals.total}</td>
+            <td>${player.stats.steals.avg.toFixed(1)}</td>
+            <td>${player.stats.blocks.total}</td>
+            <td>${player.stats.blocks.avg.toFixed(1)}</td>
+            <td>${player.stats.threePointers.total}</td>
+            <td>${player.stats.threePointers.avg.toFixed(1)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Update sort headers
+    function updateSortHeaders() {
+      document.querySelectorAll('th').forEach(th => {
+        th.classList.remove('sorted', 'asc', 'desc');
+        if (th.dataset.sort === currentSort.field) {
+          th.classList.add('sorted', currentSort.order);
+        }
+      });
+    }
+
+    // Sort click handler
+    document.querySelectorAll('th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const field = th.dataset.sort;
+        if (currentSort.field === field) {
+          currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+        } else {
+          currentSort.field = field;
+          currentSort.order = 'desc';
+        }
+        updateSortHeaders();
+        renderTable();
+      });
+    });
+
+    // Search handler
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderTable();
+    });
+
+    // Season switch
+    function switchSeason(season) {
+      if (season === currentSeason) return;
+      currentSeason = season;
+      leagueData = seasonsData[season];
+      updateHeader();
+      renderTable();
+      document.querySelectorAll('#seasonSelector .toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.season === season);
+      });
+      chatHistory = [];
+    }
+
+    function updateHeader() {
+      document.getElementById('seasonTitle').textContent = `${leagueData.season} Season Stats`;
+      document.getElementById('totalRounds').textContent = leagueData.totalRounds;
+      document.getElementById('totalPlayers').textContent = leagueData.totalPlayers;
+    }
+
+    document.querySelectorAll('#seasonSelector .toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchSeason(btn.dataset.season));
+    });
+
+    // Chat functionality
+    chatFab.addEventListener('click', () => {
+      if (!apiKey) {
+        apiKeyModal.classList.add('open');
+        return;
+      }
+      chatModal.classList.toggle('open');
+    });
+
+    closeChat.addEventListener('click', () => chatModal.classList.remove('open'));
+
+    saveApiKeyBtn.addEventListener('click', () => {
+      const key = apiKeyInput.value.trim();
+      if (key) {
+        apiKey = key;
+        localStorage.setItem('gemini_api_key', key);
+        initGemini();
+        apiKeyModal.classList.remove('open');
+        chatModal.classList.add('open');
+        apiKeyInput.value = '';
+      }
+    });
+
+    cancelApiKeyBtn.addEventListener('click', () => {
+      apiKeyModal.classList.remove('open');
+      apiKeyInput.value = '';
+    });
+
+    function initGemini() {
+      if (apiKey) {
+        genAI = new GoogleGenerativeAI(apiKey);
+      }
+    }
+
+    function getSystemPrompt() {
+      const playersSummary = leagueData.players.map(p =>
+        `${p.name}(#${p.number}, Team ${p.team}): PTS ${p.points.avg}/${p.points.total}, ` +
+        `AST ${p.stats.assists.avg}/${p.stats.assists.total}, ` +
+        `REB ${p.stats.rebounds.avg}/${p.stats.rebounds.total}, ` +
+        `STL ${p.stats.steals.avg}/${p.stats.steals.total}, ` +
+        `BLK ${p.stats.blocks.avg}/${p.stats.blocks.total}, ` +
+        `3PT ${p.stats.threePointers.avg}/${p.stats.threePointers.total}, ` +
+        `GP ${p.games}`
+      ).join('\n');
+
+      return `You are the official stats AI for "Nineblockers" basketball league.
+
+## Season Info
+- Season: ${leagueData.season}
+- Total Rounds: ${leagueData.totalRounds}
+- Total Players: ${leagueData.totalPlayers}
+- Teams: A, B, C
+
+## Player Data (name, number, team, avg/total stats)
+${playersSummary}
+
+## Your Role
+Answer questions about league statistics accurately and concisely.
+Only use the data provided above. For unrelated questions, politely decline.
+Keep responses short and use tables or lists when appropriate.`;
+    }
+
+    function parseMarkdown(text) {
+      text = text.replace(/\n?\|(.+)\|\n\|[-\s|]+\|\n((?:\|.+\|\n?)+)/g, (match, header, body) => {
+        const headers = header.split('|').map(h => h.trim()).filter(h => h);
+        const rows = body.trim().split('\n').map(row =>
+          row.split('|').map(cell => cell.trim()).filter(cell => cell)
+        );
+        let table = '<div class="table-wrapper"><table><thead><tr>';
+        headers.forEach(h => table += `<th>${h}</th>`);
+        table += '</tr></thead><tbody>';
+        rows.forEach(row => {
+          table += '<tr>';
+          row.forEach(cell => table += `<td>${cell}</td>`);
+          table += '</tr>';
+        });
+        table += '</tbody></table></div>';
+        return table;
+      });
+      text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      text = text.replace(/`(.+?)`/g, '<code>$1</code>');
+      text = text.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+      text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+      text = text.replace(/^---$/gm, '<hr>');
+      text = text.replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+      text = text.replace(/(<li>.+<\/li>\n?)+/g, (match) => `<ol>${match}</ol>`);
+      text = text.replace(/^- (.+)$/gm, '<li>$1</li>');
+      text = text.replace(/(<li>.+<\/li>\n?)+/g, (match) => {
+        if (!match.includes('<ol>')) return `<ul>${match}</ul>`;
+        return match;
+      });
+      text = text.replace(/\n(?!<)/g, '<br>');
+      text = text.replace(/(<br>){3,}/g, '<br><br>');
+      text = text.replace(/<\/(table|ul|ol|h3|h4|hr)><br>/g, '</$1>');
+      return text;
+    }
+
+    function addMessage(content, type) {
+      const div = document.createElement('div');
+      div.className = `message ${type}`;
+      if (type === 'ai') {
+        div.innerHTML = parseMarkdown(content);
+      } else {
+        div.textContent = content;
+      }
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addTypingIndicator() {
+      const div = document.createElement('div');
+      div.className = 'typing-indicator';
+      div.id = 'typingIndicator';
+      div.innerHTML = '<span></span><span></span><span></span>';
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
+    }
+
+    async function sendMessage() {
+      const message = chatInput.value.trim();
+      if (!message || !genAI) return;
+
+      chatInput.value = '';
+      sendBtn.disabled = true;
+      addMessage(message, 'user');
+      addTypingIndicator();
+
+      try {
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const historyFormatted = chatHistory.map(h => ({
+          role: h.role,
+          parts: [{ text: h.content }]
+        }));
+
+        const chat = model.startChat({
+          history: historyFormatted,
+          systemInstruction: { parts: [{ text: getSystemPrompt() }] }
+        });
+
+        const result = await chat.sendMessage(message);
+        const response = await result.response;
+        const text = response.text();
+
+        chatHistory.push({ role: 'user', content: message });
+        chatHistory.push({ role: 'model', content: text });
+
+        removeTypingIndicator();
+        addMessage(text, 'ai');
+      } catch (error) {
+        console.error('Gemini API Error:', error);
+        removeTypingIndicator();
+        let errorMsg = 'An error occurred.';
+        if (error.message?.includes('API_KEY_INVALID')) {
+          errorMsg = 'Invalid API key. Please enter a valid key.';
+        }
+        addMessage(errorMsg, 'system');
+      }
+
+      sendBtn.disabled = false;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Export functionality
+    exportBtn.addEventListener('click', () => {
+      exportModal.classList.add('open');
+    });
+
+    cancelExportBtn.addEventListener('click', () => {
+      exportModal.classList.remove('open');
+    });
+
+    // Scale buttons
+    document.querySelectorAll('.scale-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        exportScale = parseInt(btn.dataset.scale);
+      });
+    });
+
+    confirmExportBtn.addEventListener('click', async () => {
+      const exportArea = document.querySelector('input[name="exportArea"]:checked').value;
+      let target;
+
+      switch (exportArea) {
+        case 'header':
+          target = document.querySelector('header');
+          break;
+        case 'table':
+          target = document.querySelector('.table-wrapper');
+          break;
+        default:
+          target = document.getElementById('exportTarget');
+      }
+
+      try {
+        confirmExportBtn.textContent = 'Exporting...';
+        confirmExportBtn.disabled = true;
+
+        const dataUrl = await htmlToImage.toSvg(target, {
+          quality: 1,
+          pixelRatio: exportScale,
+          backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg-base'),
+          filter: (node) => {
+            return !node.classList?.contains('export-btn') &&
+                   !node.classList?.contains('chat-fab') &&
+                   !node.classList?.contains('theme-toggle');
+          }
+        });
+
+        const link = document.createElement('a');
+        link.download = `nineblockers-${exportArea}-${Date.now()}.svg`;
+        link.href = dataUrl;
+        link.click();
+
+        exportModal.classList.remove('open');
+      } catch (error) {
+        console.error('Export error:', error);
+        alert('Export failed. Please try again.');
+      } finally {
+        confirmExportBtn.textContent = 'Export';
+        confirmExportBtn.disabled = false;
+      }
+    });
+
+    // Initialize
+    initGemini();
+    renderTable();
+    updateSortHeaders();
+  </script>
+</body>
+</html>
