@@ -1,0 +1,138 @@
+<!--
+  Figma 최적화 컴포넌트 템플릿
+
+  이 템플릿을 기반으로 새 컴포넌트를 작성하세요.
+  모든 data-* 속성은 Figma 변환 시 컴포넌트 인식에 사용됩니다.
+-->
+
+<!-- ===== 카드 컴포넌트 ===== -->
+<div class="card" data-component="card" data-variant="default">
+  <div class="card__header" data-slot="header">
+    <h3 class="card__title" data-field="title">카드 제목</h3>
+    <span class="card__badge" data-field="badge" data-variant="default">배지</span>
+  </div>
+  <div class="card__body" data-slot="body">
+    <p class="card__text" data-field="description">카드 설명 텍스트가 여기에 들어갑니다.</p>
+  </div>
+  <div class="card__footer" data-slot="footer">
+    <button class="btn" data-component="button" data-variant="secondary">취소</button>
+    <button class="btn" data-component="button" data-variant="primary">확인</button>
+  </div>
+</div>
+
+<!-- ===== 버튼 컴포넌트 (Variants) ===== -->
+<div class="button-variants" data-group="button-variants">
+  <!-- Primary -->
+  <button class="btn" data-component="button" data-variant="primary" data-state="default">
+    Primary
+  </button>
+  <button class="btn" data-component="button" data-variant="primary" data-state="hover">
+    Primary Hover
+  </button>
+  <button class="btn" data-component="button" data-variant="primary" data-state="active">
+    Primary Active
+  </button>
+  <button class="btn" data-component="button" data-variant="primary" data-state="disabled" disabled>
+    Primary Disabled
+  </button>
+
+  <!-- Secondary -->
+  <button class="btn" data-component="button" data-variant="secondary" data-state="default">
+    Secondary
+  </button>
+
+  <!-- Ghost -->
+  <button class="btn" data-component="button" data-variant="ghost" data-state="default">
+    Ghost
+  </button>
+</div>
+
+<!-- ===== 입력 필드 컴포넌트 ===== -->
+<div class="input-wrapper" data-component="text-input" data-state="default">
+  <label class="input__label">라벨</label>
+  <input class="input__field" type="text" placeholder="입력하세요...">
+  <span class="input__hint" data-slot="hint">힌트 텍스트</span>
+</div>
+
+<div class="input-wrapper" data-component="text-input" data-state="focus">
+  <label class="input__label">라벨</label>
+  <input class="input__field" type="text" value="입력 중...">
+</div>
+
+<div class="input-wrapper" data-component="text-input" data-state="error">
+  <label class="input__label">라벨</label>
+  <input class="input__field" type="text" value="잘못된 값">
+  <span class="input__error" data-slot="error">오류 메시지</span>
+</div>
+
+<!-- ===== 리스트 아이템 템플릿 ===== -->
+<template id="list-item-template">
+  <div class="list-item" data-component="list-item">
+    <span class="list-item__icon" data-slot="icon">
+      <svg class="icon"><use href="#icon-default"/></svg>
+    </span>
+    <span class="list-item__content">
+      <span class="list-item__title" data-field="title">제목</span>
+      <span class="list-item__subtitle" data-field="subtitle">부제목</span>
+    </span>
+    <span class="list-item__action" data-slot="action">
+      <svg class="icon"><use href="#icon-chevron-right"/></svg>
+    </span>
+  </div>
+</template>
+
+<!-- ===== 테이블 행 템플릿 ===== -->
+<template id="table-row-template">
+  <tr class="table__row" data-component="table-row">
+    <td class="table__cell" data-field="id"></td>
+    <td class="table__cell" data-field="name"></td>
+    <td class="table__cell" data-field="value"></td>
+    <td class="table__cell table__cell--actions" data-slot="actions">
+      <button class="btn btn--icon" data-component="icon-button">
+        <svg class="icon"><use href="#icon-edit"/></svg>
+      </button>
+      <button class="btn btn--icon" data-component="icon-button">
+        <svg class="icon"><use href="#icon-delete"/></svg>
+      </button>
+    </td>
+  </tr>
+</template>
+
+<!-- ===== 배지 컴포넌트 ===== -->
+<span class="badge" data-component="badge" data-variant="default">Default</span>
+<span class="badge" data-component="badge" data-variant="primary">Primary</span>
+<span class="badge" data-component="badge" data-variant="success">Success</span>
+<span class="badge" data-component="badge" data-variant="warning">Warning</span>
+<span class="badge" data-component="badge" data-variant="error">Error</span>
+
+<!-- ===== 토글 그룹 ===== -->
+<div class="toggle-group" data-component="toggle-group">
+  <button class="toggle-btn" data-component="toggle-button" data-state="active">
+    옵션 1
+  </button>
+  <button class="toggle-btn" data-component="toggle-button" data-state="default">
+    옵션 2
+  </button>
+  <button class="toggle-btn" data-component="toggle-button" data-state="default">
+    옵션 3
+  </button>
+</div>
+
+<!-- ===== 모달 컴포넌트 ===== -->
+<div class="modal-overlay" data-component="modal" data-state="open">
+  <div class="modal" data-variant="default">
+    <div class="modal__header" data-slot="header">
+      <h3 class="modal__title" data-field="title">모달 제목</h3>
+      <button class="modal__close" data-component="icon-button" aria-label="닫기">
+        <svg class="icon"><use href="#icon-close"/></svg>
+      </button>
+    </div>
+    <div class="modal__body" data-slot="body">
+      <p>모달 내용이 여기에 들어갑니다.</p>
+    </div>
+    <div class="modal__footer" data-slot="footer">
+      <button class="btn" data-component="button" data-variant="secondary">취소</button>
+      <button class="btn" data-component="button" data-variant="primary">확인</button>
+    </div>
+  </div>
+</div>
